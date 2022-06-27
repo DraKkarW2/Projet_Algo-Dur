@@ -71,6 +71,7 @@ def generate_solution(matrice):
 
 sol = generate_solution(matricePondere)
 
+
 # def generate_solution(matrice,tw):
 #     sol = []
 #     matriceSearch = [i for i in range(len(matrice))]
@@ -122,11 +123,11 @@ def recherche_tabou(solution_initiale, taille_tabou, iter_max):
     valeur_meilleure_globale = valeur_meilleure                                
                                                                                
     while (nb_iter < iter_max):                                                
-        valeur_meilleure = -1                                                  
+                                               
                                                                                
         # on parcourt tous les voisins de la solution courante                 
         for voisin in voisinage(solution_courante):                            
-            valeur_voisin=weightSol(voisin)                               
+            valeur_voisin=weightSol(voisin)                         
                                                                                
             # MaJ meilleure solution non taboue trouvée                        
             if valeur_voisin < valeur_meilleure and voisin not in liste_tabou: 
@@ -147,7 +148,8 @@ def recherche_tabou(solution_initiale, taille_tabou, iter_max):
         # on met à jour la liste tabou                                         
         liste_tabou.append(solution_courante)                                  
                                                                                
-    return meilleure_globale      
-solfin = recherche_tabou(sol,1,1)
+    return meilleure_globale   
+print(sol)   
+solfin = recherche_tabou(sol,5,50)
 print(weightSol(solfin ),solfin )
 
