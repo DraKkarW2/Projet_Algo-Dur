@@ -22,8 +22,8 @@ def generer_matrice_adjacence(taille,typeDeGraphe):
     return matrice
     
 
-matriceAdjacence = generer_matrice_adjacence(10, "Complete")
-print(matriceAdjacence)
+matriceAdjacence = generer_matrice_adjacence(12, "Complete")
+#print(matriceAdjacence)
 
 def generer_matrice_pondere(matrice):
     for i in range(len(matrice)):
@@ -35,7 +35,7 @@ def generer_matrice_pondere(matrice):
     return matrice
 
 matricePondere = generer_matrice_pondere(matriceAdjacence)
-print(matricePondere)
+#print(matricePondere)
 def generate_time_window(matrice):
     timeWindow = {}
     for i in range(len(matrice)):
@@ -47,7 +47,7 @@ def generate_time_window(matrice):
     return timeWindow
 
 tw = generate_time_window(matricePondere)
-print(tw)
+#print(tw)
 
 def generate_solution(matrice):
     sol = {}
@@ -97,10 +97,76 @@ def voisinage(sol:dict):
             voisinage.append(voisin)
     return voisinage
 
+############################### Ma sol voisinage ####################################
+import pprint
+from copy import deepcopy
 
+def genererVoisinage(solution:dict):
+    voisinageList = []
+
+    for elm in range(len(solution)):
+        for i in range(len(solution[elm])):
+            for j in range(i+1,len(solution[elm])-1):
+                voisinage = deepcopy(solution)
+                if (i==0) : continue
+                voisinage[elm][i], voisinage[elm][j] = voisinage[elm][j], voisinage[elm][i]
+                voisinageList.append(voisinage)
+
+    return voisinageList
+
+data = genererVoisinage(sol)
+pp = pprint.PrettyPrinter(depth=3)
+pp.pprint(data)
+
+
+############################### Ma sol voisinage ####################################
+
+# data = genererVoisinage(sol)
+# print(data)
+
+
+# def get_neighbors(path):
+#     start_node=path.pop(0) #Réinitialisation du point de départ
+#     path.pop(len(path)-1) #Réinitialisation du point d'arrivé
+#     index=0
+#     for i in range(len(path)):
+#         for j in range(1,len(path)-i):
+#             neighbor_path=path.copy() #On fait une copie du chemin fourni
+#             neighbor_path[i], neighbor_path[i+j] = neighbor_path[i+j], neighbor_path[i] #A expliquer
+#             neighbor_path.insert(0,start_node) #Ajout du point de départ
+#             neighbor_path.append(start_node) #Ajout du point d'arrivé
+#             yield(neighbor_path)
+
+# Test de la fonction
+# for voisin in get_neighbors([0,1,2,3,7,7]):
+#     print(voisin)
+
+
+def voisinage(sol:dict):
+    voisinage = []
+    for j in range(len(sol)):
+        for i in range (1,len(sol[j])-2):
+            voisin = deepcopy(sol)
+            voisin[j] = sol[j][:i]+[sol[j][i+1],sol[j][i]]+sol[j][i+2:]
+            voisinage.append(voisin)
+    return voisinage
+    
 
 def weightSol(sol):
     return sum(matricePondere[sol[i][j]][sol[i][j+1]] for i in sol for j in range(len(sol[i])-1))
+
+def cout(sol):
+    cout = 0
+    for i in range(len(sol)):
+        for j in range(len(sol[i])-1):
+            cout += matricePondere[sol[i][j]][sol[i][j+1]]
+    return cout
+
+print('sol : ', sol)
+data = cout(sol)
+print("hereeeee",data)
+
+
 
 def recherche_tabou(solution_initiale, taille_tabou, iter_max):
     """
@@ -116,18 +182,18 @@ def recherche_tabou(solution_initiale, taille_tabou, iter_max):
     # variables solutions pour la recherche du voisin optimal non tabou        
     solution_courante = solution_initiale                                      
     meilleure = solution_initiale                                              
-    meilleure_globale = solution_initiale                                      
-                                                                               
+    meilleure_globale = solution_initiale   
+
+    print("Solution initial",solution_initiale, "Cout :", weightSol(solution_initiale))   
+
     # variables valeurs pour la recherche du voisin optimal non tabou          
     valeur_meilleure = weightSol(solution_initiale)                       
     valeur_meilleure_globale = valeur_meilleure                                
                                                                                
-    while (nb_iter < iter_max):                                                
-                                               
-                                                                               
+    while (nb_iter < iter_max):                                                                                                                                                 
         # on parcourt tous les voisins de la solution courante                 
-        for voisin in voisinage(solution_courante):                            
-            valeur_voisin=weightSol(voisin)                         
+        for voisin in genererVoisinage(solution_courante):                            
+            valeur_voisin=cout(voisin)          
                                                                                
             # MaJ meilleure solution non taboue trouvée                        
             if valeur_voisin < valeur_meilleure and voisin not in liste_tabou: 
@@ -137,7 +203,7 @@ def recherche_tabou(solution_initiale, taille_tabou, iter_max):
         # on met à jour la meilleure solution rencontrée depuis le début       
         if valeur_meilleure < valeur_meilleure_globale:                        
             meilleure_globale = meilleure                                      
-            valeur_meilleure_globale = valeur_meilleure                        
+            valeur_meilleure_globale = valeur_meilleure 
             nb_iter = 0                                                        
         else:                                                                  
             nb_iter += 1                                                       
@@ -149,7 +215,7 @@ def recherche_tabou(solution_initiale, taille_tabou, iter_max):
         liste_tabou.append(solution_courante)                                  
                                                                                
     return meilleure_globale   
-print(sol)   
-solfin = recherche_tabou(sol,5,50)
-print(weightSol(solfin ),solfin )
 
+# print(sol)   
+# solfin = recherche_tabou(sol,5,1)
+# print(weightSol(solfin),solfin)
