@@ -114,7 +114,6 @@ def tabuSearch(startNode, tabuLength, iterMax, graphe, withNearestNeighbor):
     3. On boucle jusqu'a condition de sortie.
     """
 
-
     nbIter = 0
     tabuList = list()
 
